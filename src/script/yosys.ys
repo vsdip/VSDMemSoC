@@ -1,0 +1,13 @@
+read_verilog ./module/vsdmemsoc.v
+read_liberty -lib ./lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+read_liberty -lib ./lib/sram_32_1024_sky130A_TT_1p8V_25C.lib
+synth -top top
+dfflibmap -liberty ./lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+opt
+abc -liberty ./lib/sky130_fd_sc_hd__tt_025C_1v80.lib -script +strash;scorr;ifraig;retime;{D};strash;dch,-f;map,-M,1,{D}
+flatten
+setundef -zero
+clean -purge
+rename -enumerate
+stat
+write_verilog -noattr ../output/synth/vsdmemsoc.synth.v
